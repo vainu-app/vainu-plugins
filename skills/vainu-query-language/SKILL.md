@@ -1,4 +1,5 @@
 ---
+name: vainu-query-language
 description: Build and understand VQL (Vainu Query Language) queries for organization search via the Vainu MCP tools.
 ---
 

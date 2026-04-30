@@ -4,6 +4,11 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag (e.g. v1.0.0)
+        required: true
 
 jobs:
   release:
@@ -26,6 +31,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ github.ref_name }}" dist/*.zip \
-            --title "vainu-skills ${{ github.ref_name }}" \
+          tag="${{ github.ref_name }}"
+          if [[ "$tag" == refs/heads/* || "$tag" == "master" || "$tag" == "main" ]]; then
+            tag="${{ inputs.tag }}"
+          fi
+          gh release create "$tag" dist/*.zip \
+            --title "vainu-skills $tag" \
             --generate-notes

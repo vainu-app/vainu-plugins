@@ -1,6 +1,46 @@
 # vainu-skills
 
-A collection of Claude Code skills for working with [Vainu](https://www.vainu.com) MCP tools and Nordic company data.
+A collection of [Agent Skills](https://agentskills.io) for working with [Vainu](https://www.vainu.com) MCP tools and Nordic company data. Skills conform to the [agentskills.io](https://agentskills.io) open standard and work with any compatible agent, including Claude Code, GitHub Copilot, Cursor, and others.
+
+## Installation
+
+### Organization skills for Claude
+
+1. Download the `vainu-skills.zip` from the [latest release](../../releases/latest) and unzip it.
+2. In Claude desktop navigate to `Organization settings` -> `Skills` (under `Libraries`) -> `+ Add` (under `Organization skills`)
+3. Drag and drop all the individual zip files within the "release" zip file into the `Upload skill` dialog.
+
+
+### Automatic installation for most 'coding' agents:
+
+```bash
+npx skills add -g vainuio/vainu-skills --skill '*'
+```
+
+### Manual installation
+
+Clone this repository and copy (or symlink) the skills into your agent's skills directory.
+
+#### Claude Code
+
+For personal use across all projects, copy the skills to `~/.claude/skills/`:
+
+```bash
+git clone https://github.com/vainuio/vainu-skills.git
+cp -r vainu-skills/skills/* ~/.claude/skills/
+```
+
+For a single project, copy into `.claude/skills/` at the project root instead.
+
+#### Other agents
+
+| Agent | Default skills path |
+|---|---|
+| VS Code / GitHub Copilot | `.agents/skills/` |
+| Cursor | `.cursor/skills/` |
+| Gemini CLI | `.gemini/skills/` |
+
+Point your agent at the `skills/` directory in this repository, or copy its contents into the appropriate path for your tool.
 
 ## Skills
 
@@ -14,9 +54,9 @@ A collection of Claude Code skills for working with [Vainu](https://www.vainu.co
 
 ## How skills work
 
-Each skill is a markdown file (`SKILL.md`) that instructs Claude how and when to use Vainu's MCP tools. Claude Code loads skills automatically as conversation context. Supporting reference files (examples, lookup tables, stylesheets) live alongside `SKILL.md` in the same directory.
+Each skill is a directory containing a `SKILL.md` file with YAML frontmatter and markdown instructions. Agents load only the `name` and `description` at startup; the full instructions load only when a task matches the skill. Supporting reference files (examples, lookup tables, stylesheets) live alongside `SKILL.md` in the same directory.
 
-Skills follow a standard frontmatter format:
+Skills follow this frontmatter format:
 
 ```yaml
 ---

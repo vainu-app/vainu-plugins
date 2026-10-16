@@ -1,0 +1,7 @@
+{
+  "name": "vainu-plugins",
+  "owner": { "name": "Vainu", "url": "https://www.vainu.com" },
+  "plugins": [
+    { "name": "vainu", "source": "./plugins/vainu" }
+  ]
+}

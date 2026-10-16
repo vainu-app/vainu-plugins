@@ -1,84 +1,69 @@
-# vainu-skills
+# vainu-plugins
 
-A collection of [Agent Skills](https://agentskills.io) for working with [Vainu](https://www.vainu.com) MCP tools and Nordic company data. Skills conform to the [agentskills.io](https://agentskills.io) open standard and work with any compatible agent, including Claude Code, GitHub Copilot, Cursor, and others.
+Plugins that bring [Vainu](https://www.vainu.com) company data into AI agents. Each plugin
+bundles the Vainu MCP connector with the [Agent Skills](https://agentskills.io) that teach the
+agent when and how to use it.
 
-## Installation
+## Install
 
-### Organization skills for Claude
-
-1. Download the `vainu-skills.zip` from the [latest release](../../releases/latest) and unzip it.
-2. In Claude desktop navigate to `Organization settings` -> `Skills` (under `Libraries`) -> `+ Add` (under `Organization skills`)
-3. Drag and drop all the individual zip files within the "release" zip file into the `Upload skill` dialog.
-
-
-### Automatic installation for most 'coding' agents:
-
-```bash
-npx skills add -g vainuio/vainu-skills --skill '*'
-```
-
-### Manual installation
-
-Clone this repository and copy (or symlink) the skills into your agent's skills directory.
-
-#### Claude Code
-
-For personal use across all projects, copy the skills to `~/.claude/skills/`:
-
-```bash
-git clone https://github.com/vainuio/vainu-skills.git
-cp -r vainu-skills/skills/* ~/.claude/skills/
-```
-
-For a single project, copy into `.claude/skills/` at the project root instead.
-
-#### Other agents
-
-| Agent | Default skills path |
+| Agent | How |
 |---|---|
-| VS Code / GitHub Copilot | `.agents/skills/` |
-| Cursor | `.cursor/skills/` |
-| Gemini CLI | `.gemini/skills/` |
+| claude.ai, Claude desktop, Cowork | **Customize > Plugins > Add > Add marketplace**, enter `vainu-app/vainu-plugins`, add **vainu**, then connect the Vainu connector on the plugin's **Connectors** tab |
+| Claude Code | `/plugin install vainu --marketplace vainu-app/vainu-plugins` (or `/plugin marketplace add vainu-app/vainu-plugins` then `/plugin install vainu@vainu-plugins`) |
+| Codex CLI and ChatGPT desktop | `codex plugin marketplace add vainu-app/vainu-plugins` then `codex plugin add vainu@vainu-plugins`, then `codex mcp login vainu`; or pick it in the desktop Plugins directory |
+| GitHub Copilot CLI | `copilot plugin marketplace add vainu-app/vainu-plugins` then `copilot plugin install vainu@vainu-plugins` |
+| Cursor | **Customize > From GitHub Repository**, enter the repository URL, install **vainu** |
+| Any agent, skills only | `npx skills add vainu-app/vainu-plugins --skill '*'` or `gh skill install vainu-app/vainu-plugins --all` |
+| Manual | download `vainu.zip` from the [latest release](../../releases/latest); on claude.ai use **Customize > Plugins > Add > Upload plugin** |
 
-Point your agent at the `skills/` directory in this repository, or copy its contents into the appropriate path for your tool.
+Notes:
 
-## Skills
+- A plugin added on claude.ai is saved to your account and also appears in Cowork and Claude
+  Code. A plugin installed from the Claude Code or Codex command line stays on that machine.
+- The Copilot and Cursor rows are written from those vendors' documentation and have not yet
+  been verified by us.
+- Codex plugins do not load in the Codex IDE extension and are undocumented for Codex cloud.
+  Use the skills-only row there.
+- Signing in to the Vainu connector uses your own Vainu account over OAuth. The plugin stores
+  no credentials.
 
-| Skill | Description | Key tools |
+## Plugins
+
+| Plugin | Skills | Details |
 |---|---|---|
-| [event-type-selection](skills/event-type-selection/SKILL.md) | Translate user intent into Vainu event type IDs for signals and lead filtering | `get_event_types_reference` |
-| [finnish-purchase-invoice-explorer](skills/finnish-purchase-invoice-explorer/SKILL.md) | Analyse Finnish public-sector B2G purchase invoice data | `b2g_buyer`, `b2g_seller`, `b2g_search_invoices`, `search_companies` |
-| [html-report](skills/html-report/SKILL.md) | Generate self-contained, Vainu-branded HTML reports from MCP output | `Write`, `Agent` |
-| [organization-field-selection](skills/organization-field-selection/SKILL.md) | Discover company field paths for use in queries and exports | `list_organization_fields` |
-| [vainu-query-language](skills/vainu-query-language/SKILL.md) | Build and validate VQL filters for `query_organizations` | `get_query_reference`, `search_filter_values`, `validate_query`, `query_organizations` |
+| `vainu` | `vainu-query-language`, `organization-field-selection`, `event-type-selection`, `finnish-purchase-invoice-explorer`, `html-report` | [plugins/vainu/README.md](plugins/vainu/README.md) |
 
-## How skills work
+Four skills can be called directly as `/vainu:<skill-name>`; `html-report` has no slash command
+and is applied automatically when you ask for a report.
 
-Each skill is a directory containing a `SKILL.md` file with YAML frontmatter and markdown instructions. Agents load only the `name` and `description` at startup; the full instructions load only when a task matches the skill. Supporting reference files (examples, lookup tables, stylesheets) live alongside `SKILL.md` in the same directory.
+## Upgrading from vainu-skills
 
-Skills follow this frontmatter format:
+The earlier `vainuio/vainu-skills` repository shipped the same skills without the connector. If
+you installed from it, remove the old copies first, otherwise every skill appears twice:
 
-```yaml
----
-name: skill-name
-description: When and why to invoke this skill.
-allowed-tools: mcp__claude_ai_Vainu__some_tool Read Write
----
-```
+- On claude.ai, delete the per-skill uploads under **Organization settings > Skills** or
+  **Customize > Skills**.
+- For a `npx skills add vainuio/vainu-skills` install, run `npx skills remove` for those skills
+  or delete them from your agent's skills directory.
 
-## Directory layout
+Then install the plugin as described above.
 
-```
-skills/
-  event-type-selection/           SKILL.md + event-types-reference.md
-  finnish-purchase-invoice-explorer/  SKILL.md
-  html-report/                    SKILL.md + assets/vainu-report.css
-  organization-field-selection/   SKILL.md + organization-fields-reference.md
-  vainu-query-language/           SKILL.md + reference.md + examples.md
-```
+## Adding a plugin
 
-## Adding a skill
+1. Create `plugins/<name>/` with a `skills/` directory of `<skill>/SKILL.md` folders.
+2. Add both manifests: `plugins/<name>/.claude-plugin/plugin.json` for Claude and
+   `plugins/<name>/plugin.json` in the [Agent Plugins](https://agent-plugins.org) format. Set
+   `version` to the version the other plugins carry; CI fails when any manifest differs.
+3. If the plugin needs the Vainu connector, copy `.mcp.json` and `mcp.json` from `plugins/vainu`.
+4. Add a `README.md` of at least 40 words and a `LICENSE.txt` to the plugin folder.
+5. Add an entry to `.claude-plugin/marketplace.json` and `.cursor-plugin/marketplace.json`.
+6. Run `claude plugin validate .` and `python3 -I scripts/check_release_version.py`.
 
-1. Create `skills/<name>/SKILL.md` with the required frontmatter (`name`, `description`, `allowed-tools`).
-2. Add supporting reference files (`.md`, assets) in the same directory as needed.
-3. Follow the section structure used by existing skills: **When to use**, **Workflow**, **Output format**.
+## Releasing
+
+All plugins in this repository share one version. Raise `version` in both manifests of every
+plugin, commit, and push a tag `v<version>`.
+The release workflow validates, checks the versions against the tag, zips each plugin and
+creates a GitHub release. A tag with a suffix such as `v1.0.0-rc.1` becomes a pre-release and
+is the way to exercise the workflow before a real release.
+

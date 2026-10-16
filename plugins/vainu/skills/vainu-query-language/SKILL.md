@@ -1,7 +1,7 @@
 ---
 name: vainu-query-language
 description: Build and understand VQL (Vainu Query Language) queries for organization search via the Vainu MCP tools.
-allowed-tools: get_query_reference search_filter_values validate_query query_organizations list_organization_fields get_user_lists get_user_list
+allowed-tools: get_query_reference search_filter_values validate_query query_organizations list_organization_fields list_company_lists get_company_list
 ---
 
 # Vainu Query Language (VQL) Reference
@@ -170,7 +170,7 @@ Industry codes, staff range, and turnover range (all must match).
 
 ### 2. Including or Excluding a target group (user list)
 
-You can query companies that belong to a specific user list (target group) using its list ID. You can find list IDs using the `get_user_lists` or `get_user_list` tools.
+You can query companies that belong to a specific user list (target group) using its list ID. You can find list IDs using the `list_company_lists` or `get_company_list` tools.
 
 Include companies from a specific target group:
 ```json

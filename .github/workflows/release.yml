@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Release tag (e.g. v1.0.0)
+        description: Release tag (e.g. v1.0.0 or v1.0.0-rc.1)
         required: true
 
 jobs:
@@ -18,23 +18,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build skill zips
-        run: |
-          mkdir dist
-          for dir in skills/*/; do
-            skill=$(basename "$dir")
-            (cd skills && zip -r "../dist/${skill}.zip" "${skill}/")
-          done
-          cd dist && zip vainu-skills.zip *.zip
-
-      - name: Create GitHub release
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Resolve tag
+        id: tag
         run: |
           tag="${{ github.ref_name }}"
           if [[ "$tag" == refs/heads/* || "$tag" == "master" || "$tag" == "main" ]]; then
             tag="${{ inputs.tag }}"
           fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Validate marketplace and plugins
+        run: claude plugin validate .
+
+      - name: Check manifest versions match the tag
+        run: python3 -I scripts/check_release_version.py --tag "${{ steps.tag.outputs.tag }}"
+
+      # One zip per plugin with the plugin folder as the single top-level
+      # entry, which is what claude.ai's "Upload plugin" accepts.
+      - name: Build plugin zips
+        run: |
+          mkdir dist
+          for dir in plugins/*/; do
+            plugin=$(basename "$dir")
+            (cd plugins && zip -r "../dist/${plugin}.zip" "${plugin}/")
+          done
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${{ steps.tag.outputs.tag }}"
+          prerelease=()
+          [[ "$tag" == *-* ]] && prerelease=(--prerelease)
           gh release create "$tag" dist/*.zip \
-            --title "vainu-skills $tag" \
-            --generate-notes
+            --title "vainu-plugins $tag" \
+            --generate-notes "${prerelease[@]}"

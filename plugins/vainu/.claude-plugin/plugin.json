@@ -1,0 +1,11 @@
+{
+  "name": "vainu",
+  "displayName": "Vainu",
+  "version": "1.0.0",
+  "description": "Nordic company data, signals, and documents from Vainu: query companies, pick event types and fields, explore Finnish public-sector purchase invoices, and produce Vainu-styled HTML reports.",
+  "author": { "name": "Vainu", "url": "https://www.vainu.com" },
+  "homepage": "https://github.com/vainu-app/vainu-plugins",
+  "repository": "https://github.com/vainu-app/vainu-plugins",
+  "license": "MIT",
+  "keywords": ["vainu", "company-data", "nordic", "b2b", "sales"]
+}

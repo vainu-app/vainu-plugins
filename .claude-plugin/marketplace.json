@@ -1,0 +1,14 @@
+{
+  "name": "vainu-plugins",
+  "description": "Plugins for working with Vainu company data in Claude, Codex, and other agents.",
+  "owner": { "name": "Vainu", "url": "https://www.vainu.com" },
+  "plugins": [
+    {
+      "name": "vainu",
+      "source": "./plugins/vainu",
+      "description": "Nordic company data, signals, and documents from Vainu: query companies, pick event types and fields, explore Finnish public-sector purchase invoices, and produce Vainu-styled HTML reports.",
+      "category": "Sales",
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 ---
 name: event-type-selection
 description: Pick relevant event type tags from the canonical list for company context. Use when selecting event types for prompts, refining event filters, or matching user intent to event IDs. Filtering uses numeric IDs; each event has label, category, and databases (countries) where it applies.
-allowed-tools: get_event_types_reference Read
+allowed-tools: Read
 ---
 
 # Event Type Selection

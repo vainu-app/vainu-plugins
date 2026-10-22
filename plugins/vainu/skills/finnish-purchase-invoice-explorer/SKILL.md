@@ -1,6 +1,6 @@
 ---
 name: finnish-purchase-invoice-explorer
-allowed-tools: search_companies b2g_buyer b2g_seller b2g_search_invoices document_search Bash(jq:*) Read
+allowed-tools: Bash(jq:*) Read
 description: >
   Finnish public purchase invoice (ostolaskut) explorer. Use this skill whenever the user wants to
   explore, analyse, or drill into Finnish government/public sector purchase invoice data. Triggers include:

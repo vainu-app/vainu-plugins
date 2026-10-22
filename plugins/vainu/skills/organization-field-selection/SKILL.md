@@ -1,7 +1,6 @@
 ---
 name: organization-field-selection
 description: Discover and choose company (organization) field paths for queries and context. Use when building query_organizations or get_company_context and you need valid field names. Selection uses the path (api.v3.path) from list_organization_fields; filter by category, search, or availability.
-allowed-tools: list_organization_fields
 ---
 
 # Organization Field Selection
